@@ -1,0 +1,22 @@
+# Mask Police
+## For the Module DeepL at FFHS
+
+This is the source code for a automatic mask detection with Tensorflow.
+
+
+## Getting Started
+
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install cmake
+pip install dlib
+pip install -r requirements.txt
+```
+
+### Generate Images
+
+## Inspiration
+
+This project is strongly inspired by:  
+https://github.com/prajnasb/observations

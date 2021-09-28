@@ -1,0 +1,4 @@
+face_recognition
+Pillow
+numpy
+autopep8
