@@ -9,6 +9,7 @@ This is the source code for a automatic mask detection with Tensorflow. This has
 ```
 python3 -m venv venv
 source venv/bin/activate
+pip install --upgrade pip
 pip install cmake
 pip install dlib
 pip install -r requirements.txt
