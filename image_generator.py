@@ -1,6 +1,7 @@
 from PIL import Image, ImageFile
 from os.path import join, isfile, dirname, splitext
 from os import listdir
+import face_recognition
 import numpy as np
 import os
 
@@ -30,18 +31,15 @@ def create_mask_images(s_dir, t_dir, m_dir):
 class FaceMasker:
     KEY_FACIAL_FEATURES = ('nose_bridge', 'chin')
 
-    def __init__(self, face_path, mask_path, target_dir, show=False, model='hog'):
+    def __init__(self, face_path, mask_path, target_dir, model='hog'):
         self.face_path = face_path
         self.mask_path = mask_path
         self.target_dir = target_dir
-        self.show = show
         self.model = model
         self._face_img: ImageFile = None
         self._mask_img: ImageFile = None
 
     def mask(self):
-        import face_recognition
-
         face_image_np = face_recognition.load_image_file(self.face_path)
         face_locations = face_recognition.face_locations(
             face_image_np, model=self.model)
@@ -66,9 +64,6 @@ class FaceMasker:
             self._mask_face(face_landmark)
 
         if found_face:
-            if self.show:
-                self._face_img.show()
-
             # save
             self._save()
         else:

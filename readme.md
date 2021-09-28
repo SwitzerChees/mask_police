@@ -1,7 +1,7 @@
 # Mask Police
 ## For the Module DeepL at FFHS
 
-This is the source code for a automatic mask detection with Tensorflow.
+This is the source code for a automatic mask detection with Tensorflow. This has only educational purposes.
 
 
 ## Getting Started
@@ -14,9 +14,6 @@ pip install dlib
 pip install -r requirements.txt
 ```
 
-### Generate Images
+## Inspiration / Special Thanks
 
-## Inspiration
-
-This project is strongly inspired by:  
-https://github.com/prajnasb/observations
+This project is strongly inspired by https://github.com/prajnasb/observations and all credits go to prajnasb 😉
