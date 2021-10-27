@@ -1,3 +1,4 @@
+azure-cognitiveservices-speech
 face_recognition
 opencv-python
 tensorflow
