@@ -5,3 +5,4 @@ Pillow
 numpy
 autopep8
 pygame
+azure-cognitiveservices-speech
