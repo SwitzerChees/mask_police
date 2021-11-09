@@ -1,11 +1,7 @@
 azure-cognitiveservices-speech
 face_recognition
-opencv-python~=4.5.4.58
-tensorflow~=2.6.0
-Pillow~=8.4.0
-numpy~=1.19.5
+opencv-python
+tensorflow
+Pillow
+numpy
 autopep8
-pygame~=2.0.2
-scipy
-
-keras~=2.6.0
