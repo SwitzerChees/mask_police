@@ -17,11 +17,11 @@ model_path = 'model/my_model'
 model = load_model(model_path)
 face_size = (125, 125)
 
-dir = '../../FFHS_Bilder/'
+dir = 'images/label/'
 
 if os.path.exists(dir):
     for filename in os.listdir(dir):
-        if filename.endswith(".jpg") or filename.endswith(".png"):
+        if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png"):
             print(filename)
             print(os.path.join(dir, filename))
             img = face_recognition.load_image_file(os.path.join(dir, filename))
