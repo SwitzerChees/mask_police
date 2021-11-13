@@ -8,17 +8,19 @@ import face_recognition
 import os
 import shutil
 
+from tensorflow.python.keras.callbacks import EarlyStopping
+
 
 def create_model(size=125):
     model = Sequential([
-        Conv2D(100, (3, 3), activation='relu', input_shape=(size, size, 3)),
+        Conv2D(50, (3, 3), activation='relu', input_shape=(size, size, 3)),
         MaxPooling2D(2, 2),
 
-        Conv2D(100, (3, 3), activation='relu'),
+        Conv2D(50, (3, 3), activation='relu'),
         MaxPooling2D(2, 2),
 
         Flatten(),
-        Dropout(0.5),
+        Dropout(0.3),
         Dense(50, activation='relu'),
         Dense(2, activation='softmax')
     ])
@@ -54,8 +56,9 @@ def train_model(training_path, validation_path, model_path, size=(125, 125)):
     checkpoint_filepath = os.path.join(model_path, 'checkpoints')
     checkpoint = ModelCheckpoint(
         checkpoint_filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor="val_loss", min_delta=1e-4, patience=3, verbose=1, mode="auto")
     model.fit(
-        train_generator, epochs=20, validation_data=validation_generator, callbacks=[checkpoint])
+        train_generator, epochs=1000, validation_data=validation_generator, callbacks=[checkpoint, early_stopping])
     model.load_weights(checkpoint_filepath)
     model.save('model/my_model')
 
