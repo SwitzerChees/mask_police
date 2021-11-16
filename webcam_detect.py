@@ -35,6 +35,7 @@ if os.path.exists(dir):
 face_locations = []
 face_names = []
 process_this_frame = True
+predictions = { 'face': [], 'mask': [] }
 
 while True:
     # Grab a single frame of video
@@ -59,7 +60,7 @@ while True:
             # See if the face is a match for the known face(s)
             matches = face_recognition.compare_faces(
                 known_face_encodings, face_encoding)
-            name = "Unknown"
+            name = "Unbekannt"
 
             # # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:
@@ -90,21 +91,35 @@ while True:
 
         image = tf.expand_dims(cv2.resize(faceImage, face_size), 0)
         result = model.predict(image)
-        prediction = 'mask' if result[0][0] > result[0][1] else 'face'
-        # Choose color: green means ok and red means not good...
-        if prediction == 'mask':
-            color = (0, 255, 0)
-        else:
+        N = 5
+        predictions['face'].append(result[0][1])
+        predictions['face'] = predictions['face'][-N:]
+        predictions['mask'].append(result[0][0])
+        predictions['mask'] = predictions['mask'][-N:]
+    
+        if predictions['face'] > predictions['mask']:
+            perc = round(np.average(predictions['face']) * 100, 2)
+            label = f'Gesicht: {perc}%'
             color = (0, 0, 255)
+        else:
+            perc = round(np.average(predictions['mask']) * 100, 2)
+            label = f'Maske: {perc}%'
+            color = (0, 255, 0)
+            
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
 
         # Draw a label with a name below the face
-        cv2.rectangle(frame, (left, bottom - 35),
-                      (right, bottom), color, cv2.FILLED)
+        cv2.rectangle(frame, (left, bottom - 30),
+                    (right, bottom), color, cv2.FILLED)
+        cv2.rectangle(frame, (left - 1, top - 30),
+                    (right + 1, top), color, cv2.FILLED)
+        
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6),
-                    font, 0.7, (0, 0, 0), 1)
+                    font, 0.6, (0, 0, 0), 1)
+        cv2.putText(frame, label, (left + 6, top - 6),
+                    font, 0.6, (0, 0, 0), 1)
 
     # Display the resulting image
     cv2.imshow('Video', frame)
