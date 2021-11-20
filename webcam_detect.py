@@ -1,4 +1,5 @@
 from tensorflow.keras.models import load_model
+from keras.applications.vgg16 import preprocess_input
 import tensorflow as tf
 import face_recognition
 import cv2
@@ -90,7 +91,7 @@ while True:
         faceImage = frame[top:bottom, left:right]
 
         image = tf.expand_dims(cv2.resize(faceImage, face_size), 0)
-        result = model.predict(image)
+        result = model.predict(preprocess_input(image))
         N = 5
         predictions['face'].append(result[0][0])
         predictions['face'] = predictions['face'][-N:]
