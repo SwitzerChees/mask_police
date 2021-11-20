@@ -1,7 +1,8 @@
 
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.applications import VGG16
 from tensorflow.keras.callbacks import ModelCheckpoint
 from PIL import Image
 import face_recognition
@@ -12,18 +13,28 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 
 
 def create_model(size=125):
-    model = Sequential([
-        Conv2D(50, (3, 3), activation='relu', input_shape=(size, size, 3)),
-        MaxPooling2D(2, 2),
+    model = VGG16(include_top=False, input_shape=(size, size, 3))
+    # mark loaded layers as not trainable
+    for layer in model.layers:
+        layer.trainable = False
+    flat1 = Flatten()(model.layers[-1].output)
+    class1 = Dense(1024, activation='relu')(flat1)
+    output = Dense(2, activation='softmax')(class1)
+    # define new model
+    model = Model(inputs=model.inputs, outputs=output)
+    
+    # model = Sequential([
+    #     Conv2D(50, (3, 3), activation='relu', input_shape=(size, size, 3)),
+    #     MaxPooling2D(2, 2),
 
-        Conv2D(50, (3, 3), activation='relu'),
-        MaxPooling2D(2, 2),
+    #     Conv2D(50, (3, 3), activation='relu'),
+    #     MaxPooling2D(2, 2),
 
-        Flatten(),
-        Dropout(0.3),
-        Dense(50, activation='relu'),
-        Dense(2, activation='softmax')
-    ])
+    #     Flatten(),
+    #     Dropout(0.3),
+    #     Dense(50, activation='relu'),
+    #     Dense(2, activation='softmax')
+    # ])
     model.compile(optimizer='adam',
                   loss='binary_crossentropy', metrics=['acc'])
     return model
@@ -53,13 +64,13 @@ def train_model(training_path, validation_path, model_path, size=(125, 125)):
 
     os.makedirs(model_path, exist_ok=True)
     os.makedirs(os.path.join(model_path, 'checkpoints'), exist_ok=True)
-    checkpoint_filepath = os.path.join(model_path, 'checkpoints')
-    checkpoint = ModelCheckpoint(
-        checkpoint_filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+    # checkpoint_filepath = os.path.join(model_path, 'checkpoints')
+    # checkpoint = ModelCheckpoint(
+    #     checkpoint_filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
     early_stopping = EarlyStopping(monitor="val_loss", min_delta=1e-4, patience=3, verbose=1, mode="auto")
     model.fit(
-        train_generator, epochs=1000, validation_data=validation_generator, callbacks=[checkpoint, early_stopping])
-    model.load_weights(checkpoint_filepath)
+        train_generator, epochs=100, validation_data=validation_generator, callbacks=[early_stopping])
+    # model.load_weights(checkpoint_filepath)
     model.save('model/my_model')
 
 

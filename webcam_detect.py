@@ -92,9 +92,9 @@ while True:
         image = tf.expand_dims(cv2.resize(faceImage, face_size), 0)
         result = model.predict(image)
         N = 5
-        predictions['face'].append(result[0][1])
+        predictions['face'].append(result[0][0])
         predictions['face'] = predictions['face'][-N:]
-        predictions['mask'].append(result[0][0])
+        predictions['mask'].append(result[0][1])
         predictions['mask'] = predictions['mask'][-N:]
     
         if predictions['face'] > predictions['mask']:
