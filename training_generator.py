@@ -2,8 +2,9 @@
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications import VGG16, Xception, VGG19, MobileNetV2, InceptionV3
 from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.optimizers import SGD
 from PIL import Image
 import face_recognition
 import os
@@ -14,12 +15,14 @@ from tensorflow.python.keras.callbacks import EarlyStopping
 
 def create_model(size=125):
     model = VGG16(include_top=False, input_shape=(size, size, 3))
+    # model = VGG19(include_top=False, input_shape=(size, size, 3))
     # mark loaded layers as not trainable
     for layer in model.layers:
         layer.trainable = False
     flat1 = Flatten()(model.layers[-1].output)
-    class1 = Dense(1024, activation='relu')(flat1)
-    output = Dense(2, activation='softmax')(class1)
+    class1 = Dense(256, activation='relu')(flat1)
+    class2 = Dense(128, activation='relu')(class1)
+    output = Dense(2, activation='softmax')(class2)
     # define new model
     model = Model(inputs=model.inputs, outputs=output)
     
@@ -120,6 +123,6 @@ if __name__ == '__main__':
     training_path = 'model/data/training'
     validation_path = 'model/data/validation'
     model_path = 'model'
-    split_dataset('images/without_mask', 'images/with_mask',
-                  training_path, validation_path)
+    # split_dataset('images/without_mask', 'images/with_mask',
+    #               training_path, validation_path)
     train_model(training_path, validation_path, model_path)
