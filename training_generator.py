@@ -1,6 +1,7 @@
 
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dropout, Dense
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from keras.applications.vgg16 import preprocess_input
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.applications import VGG16, Xception, VGG19, MobileNetV2, InceptionV3
 from tensorflow.keras.callbacks import ModelCheckpoint
@@ -53,13 +54,14 @@ def train_model(training_path, validation_path, model_path, size=(125, 125)):
                                        shear_range=0.2,
                                        zoom_range=0.2,
                                        horizontal_flip=True,
-                                       fill_mode='nearest')
+                                       fill_mode='nearest',
+                                       preprocessing_function=preprocess_input)
 
     train_generator = train_datagen.flow_from_directory(training_path,
                                                         batch_size=10,
                                                         target_size=size)
 
-    validation_datagen = ImageDataGenerator(rescale=1.0/255)
+    validation_datagen = ImageDataGenerator(rescale=1.0/255, preprocessing_function=preprocess_input)
 
     validation_generator = validation_datagen.flow_from_directory(validation_path,
                                                                   batch_size=10,
@@ -67,13 +69,9 @@ def train_model(training_path, validation_path, model_path, size=(125, 125)):
 
     os.makedirs(model_path, exist_ok=True)
     os.makedirs(os.path.join(model_path, 'checkpoints'), exist_ok=True)
-    # checkpoint_filepath = os.path.join(model_path, 'checkpoints')
-    # checkpoint = ModelCheckpoint(
-    #     checkpoint_filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
     early_stopping = EarlyStopping(monitor="val_loss", min_delta=1e-4, patience=3, verbose=1, mode="auto")
     model.fit(
         train_generator, epochs=100, validation_data=validation_generator, callbacks=[early_stopping])
-    # model.load_weights(checkpoint_filepath)
     model.save('model/my_model')
 
 
