@@ -5,3 +5,6 @@ tensorflow
 Pillow
 numpy
 autopep8
+keras
+pygame
+python-dotenv
