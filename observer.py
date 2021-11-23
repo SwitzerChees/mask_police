@@ -123,4 +123,5 @@ attached to.
 class MaskObserver(Observer):
     def update(self, subject: Subject) -> None:
         if subject._has_mask is False:
-            threading.Thread(target=speech_generator.generate_output_speech, args=(subject._name))
+            t = threading.Thread(target=speech_generator.generate_output_speech, args=[subject._name])
+            t.start()
