@@ -9,6 +9,9 @@ import os
 # Code Source: https://github.com/ageitgey/face_recognition/blob/master/examples/facerec_from_webcam_faster.py
 
 # Get a reference to webcam #0 (the default one)
+import speech_generator
+from observer import Person, MaskObserver
+
 video_capture = cv2.VideoCapture(0)
 
 known_face_encodings = []
@@ -19,6 +22,10 @@ model = load_model(model_path)
 face_size = (125, 125)
 
 dir = 'images/label/'
+
+person = Person()
+observer = MaskObserver()
+person.attach(observer)
 
 if os.path.exists(dir):
     for filename in os.listdir(dir):
@@ -75,6 +82,7 @@ while True:
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
+                    person.update_name(name)
 
             face_names.append(name + " " + str(int(face_distances[best_match_index]*100)) + "%")
 
@@ -99,10 +107,12 @@ while True:
         predictions['mask'] = predictions['mask'][-N:]
     
         if predictions['face'] > predictions['mask']:
+            person.update_mask(False)
             perc = round(np.average(predictions['face']) * 100, 2)
             label = f'Gesicht: {perc}%'
             color = (0, 0, 255)
         else:
+            person.update_mask(True)
             perc = round(np.average(predictions['mask']) * 100, 2)
             label = f'Maske: {perc}%'
             color = (0, 255, 0)
