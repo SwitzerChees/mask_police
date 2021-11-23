@@ -10,6 +10,7 @@ import os
 
 # Get a reference to webcam #0 (the default one)
 import speech_generator
+from observer import Person, MaskObserver
 
 video_capture = cv2.VideoCapture(0)
 
@@ -21,6 +22,10 @@ model = load_model(model_path)
 face_size = (125, 125)
 
 dir = 'images/label/'
+
+person = Person()
+observer = MaskObserver()
+person.attach(observer)
 
 if os.path.exists(dir):
     for filename in os.listdir(dir):
@@ -77,11 +82,11 @@ while True:
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
+                    person.update_name(name)
 
             face_names.append(name)
 
     process_this_frame = not process_this_frame
-    mask = False
 
     # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -102,12 +107,12 @@ while True:
         predictions['mask'] = predictions['mask'][-N:]
     
         if predictions['face'] > predictions['mask']:
-            mask = False
+            person.update_mask(False)
             perc = round(np.average(predictions['face']) * 100, 2)
             label = f'Gesicht: {perc}%'
             color = (0, 0, 255)
         else:
-            mask = True
+            person.update_mask(True)
             perc = round(np.average(predictions['mask']) * 100, 2)
             label = f'Maske: {perc}%'
             color = (0, 255, 0)
@@ -129,8 +134,6 @@ while True:
 
     # Display the resulting image
     cv2.imshow('Video', frame)
-    if not mask:
-        speech_generator.generate_output_speech(name)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):
