@@ -18,6 +18,7 @@ import pygame.mixer
 import os
 from dotenv import load_dotenv
 
+pygame.mixer.init()
 load_dotenv()
 AZURE_KEY = os.getenv('AZURE_KEY')
 print(AZURE_KEY)
