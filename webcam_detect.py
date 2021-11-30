@@ -84,7 +84,7 @@ while True:
                     name = known_face_names[best_match_index]
                     person.update_name(name)
 
-            face_names.append(name)
+            face_names.append(name + " " + str(int(face_distances[best_match_index]*100)) + "%")
 
     process_this_frame = not process_this_frame
 
