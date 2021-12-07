@@ -10,8 +10,7 @@ except ImportError:
     import sys
 
     sys.exit(1)
-from threading import Lock
-import time
+
 import glob
 import random
 import pygame.mixer
