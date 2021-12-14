@@ -69,6 +69,7 @@ while True:
             matches = face_recognition.compare_faces(
                 known_face_encodings, face_encoding)
             name = "Unbekannt"
+            person.update_name(name)
 
             # # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:

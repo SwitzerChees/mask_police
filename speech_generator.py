@@ -51,4 +51,6 @@ def generate_output_speech(name):
 
 
 def random_output():
-    pygame.mixer.Sound(random.choice(soundfiles)).play()
+    channel = pygame.mixer.Sound(random.choice(soundfiles)).play()
+    while channel.get_busy():
+        pygame.time.wait(100)
