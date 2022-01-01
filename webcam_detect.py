@@ -69,7 +69,6 @@ while True:
             matches = face_recognition.compare_faces(
                 known_face_encodings, face_encoding)
             name = "Unbekannt"
-            person.update_name(name)
 
             # # If a match was found in known_face_encodings, just use the first one.
             # if True in matches:
@@ -83,9 +82,9 @@ while True:
                 best_match_index = np.argmin(face_distances)
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
-                    person.update_name(name)
 
             face_names.append(name + " " + str(int(face_distances[best_match_index]*100)) + "%")
+            person.update_name(name)
 
     process_this_frame = not process_this_frame
 

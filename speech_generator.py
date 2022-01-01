@@ -34,7 +34,6 @@ def generate_output_speech(name):
             output = name.split()
             name = output[0]
             speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
-            # speech_config.set_speech_synthesis_output_format(speechsdk.SpeechSynthesisOutputFormat)
             synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config)
             ssml_string = "<speak version=\"1.0\""
             ssml_string += " xmlns=\"http://www.w3.org/2001/10/synthesis\""
